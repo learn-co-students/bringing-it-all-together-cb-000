@@ -8,3 +8,6 @@ gem 'rspec'
 
 # Debugging
 gem 'pry'
+
+#More Debugging!
+gem 'pry-byebug'
