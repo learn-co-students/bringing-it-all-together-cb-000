@@ -1,11 +1,10 @@
 class Dog
 
-  attr_accessor :id, :name, :breed
+  attr_accessor :name, :breed
+  attr_reader :id
 
   def initialize(id:nil,name:,breed:)
-    @id = id
-    @name = name
-    @breed = breed
+    @name, @breed, @id = name, breed, id
   end
 
   def self.create_table
@@ -19,7 +18,7 @@ class Dog
   def save
     sql = 'INSERT INTO dogs (name, breed) VALUES (?,?)'
     DB[:conn].execute(sql,self.name,self.breed)
-    self.id = DB[:conn].execute('SELECT last_insert_rowid() FROM dogs')[0][0]
+    @id = DB[:conn].execute('SELECT last_insert_rowid() FROM dogs')[0][0]
     self
   end
 
@@ -46,13 +45,14 @@ class Dog
   def self.find_or_create_by(hash)
     sql = 'SELECT * FROM dogs WHERE name = ? AND breed = ? LIMIT 1'
     row = DB[:conn].execute(sql, hash[:name], hash[:breed]).first
-    dog = nil
-    if !row
-      dog = self.create(hash)
-    else 
-      dog = self.new_from_db(row)
-    end
-    dog
+    row ? self.new_from_db(row) : self.create(hash)
+    # dog = nil
+    # if !row
+    #   dog = self.create(hash)
+    # else 
+    #   dog = self.new_from_db(row)
+    # end
+    # dog
   end
 
   def update
