@@ -104,6 +104,3 @@ class Dog
   end
 
 end
-
-#   #update
-# F    updates the record associated with a given instance (FAILED - 16)
