@@ -35,8 +35,8 @@ class Dog
       SQL
       DB[:conn].execute(sql, self.name, self.breed)
       @id = DB[:conn].execute('SELECT last_insert_rowid() FROM dogs')[0][0]
-      self
     end
+    self
   end
 
   def self.create(name:, breed:)
@@ -70,5 +70,13 @@ class Dog
   def update
     sql = 'UPDATE dogs SET name = ?, breed = ? WHERE id = ?'
     DB[:conn].execute(sql, self.name, self.breed, self.id)
+  end
+
+  def self.find_or_create_by(name:, breed:)
+    sql = <<-SQL
+      SELECT * FROM dogs WHERE name = '#{name}' AND breed = '#{breed}'
+    SQL
+    row = DB[:conn].execute(sql).flatten
+    !row.empty? ? new_from_db(row) : create(name: name, breed: breed)
   end
 end
