@@ -40,4 +40,18 @@ class Dog
     dog.save
     dog
   end
+
+  def self.find_by_id(dog_id)
+    row = DB[:conn].execute('SELECT * FROM dogs WHERE id = ?', dog_id)
+    dog = new_from_db(row)
+    dog
+  end
+
+  def self.new_from_db(row)
+    row.flatten!
+    id, name, breed = row[0], row[1], row[2]
+    dog = self.new(name: name, breed: breed)
+    dog.id = id
+    dog
+  end
 end
