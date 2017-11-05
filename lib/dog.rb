@@ -3,12 +3,10 @@ class Dog
   attr_accessor :name, :breed, :id
 
   def initialize(hash=nil)
-    if hash
-      hash.each do |key, value|
-        instance_variable_set("@#{key}", value) unless value.nil?
-      end
+    hash.each do |key, value|
+      instance_variable_set("@#{key}", value) unless value.nil?
     end
-    @id = nil
+    @id ||= nil
   end
 
   def self.create_table
@@ -55,27 +53,50 @@ class Dog
   def self.create(hash)
     i = self.new(hash)
     i.save
+    i
   end
 
   def self.new_from_db(row_array)
-    # hash = Hash.new
-    # hash[":id"] = row_array[0]
-    # hash[":name"] = row_array[1]
-    # hash[":breed"] = row_array[2]
-    # self.new(hash)
-    i = self.new
-    i.id = row_array[0]
-    i.name = row_array[1]
-    i.breed = row_array[2]
+    hash = Hash.new
+    hash[:id] = row_array[0]
+    hash[:name] = row_array[1]
+    hash[:breed] = row_array[2]
+    self.new(hash)
   end
 
   def self.find_by_id(id)
     sql = <<-SQL
       SELECT * FROM dogs WHERE id = ?
     SQL
-    DB[:conn].execute(sql, id).map do |row|
+    a = DB[:conn].execute(sql, id).map do |row|
         self.new_from_db(row)
     end.first
+    a.id = id
+    a
+  end
+
+  def self.find_or_create_by(hash)
+    name = hash[:name]
+    breed = hash[:breed]
+    sql = <<-SQL
+      SELECT * FROM dogs WHERE name = ? AND breed = ?
+    SQL
+    result = DB[:conn].execute(sql, name, breed).flatten
+
+    if !result.empty?
+      dog = self.new_from_db(result)
+    else
+      dog = self.create(hash)
+    end
+    dog
+  end
+
+  def self.find_by_name(name)
+    sql = <<-SQL
+      SELECT * FROM dogs WHERE name = ?
+    SQL
+    result = DB[:conn].execute(sql, name).flatten
+    self.new_from_db(result)
   end
 
 end
