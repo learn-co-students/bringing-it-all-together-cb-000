@@ -29,4 +29,18 @@ class Dog
     DB[:conn].execute("DROP TABLE dogs;")
   end
 
+  # returns an instance of the dog class
+  # saves an instance of the dog class to the database and then sets the given dog's `id` attribute
+  def save
+    sql = <<-SQL
+      INSERT INTO dogs (name, breed)
+      VALUES (?, ?)
+    SQL
+
+    DB[:conn].execute(sql, name, breed)
+    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+
+    self
+  end
+
 end
