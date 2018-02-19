@@ -32,15 +32,29 @@ class Dog
   # returns an instance of the dog class
   # saves an instance of the dog class to the database and then sets the given dog's `id` attribute
   def save
+    if self.id
+      update
+    else
+      sql = <<-SQL
+        INSERT INTO dogs (name, breed)
+        VALUES (?, ?)
+      SQL
+      
+      DB[:conn].execute(sql, name, breed)
+      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+    end
+    self
+  end
+
+  # updates the record associated with a given instance
+  def update
     sql = <<-SQL
-      INSERT INTO dogs (name, breed)
-      VALUES (?, ?)
+      UPDATE dogs
+      SET name = ?, breed = ?
+      WHERE id = ?
     SQL
 
-    DB[:conn].execute(sql, name, breed)
-    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
-
-    self
+    DB[:conn].execute(sql, name, breed, id)
   end
 
 end
