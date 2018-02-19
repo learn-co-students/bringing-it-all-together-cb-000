@@ -66,4 +66,25 @@ class Dog
     dog
   end
 
+  # creates an instance with corresponding attribute values
+  def self.new_from_db(row)
+    id = row[0]
+    name = row[1]
+    breed = row[2]
+    self.new(id: id, name: name, breed: breed)
+  end
+
+  # returns a new dog object by id
+  def self.find_by_id(id)
+    sql = <<-SQL
+      SELECT * FROM dogs
+      WHERE id = ?
+      LIMIT 1
+    SQL
+
+    DB[:conn].execute(sql,id).map do |row|
+      self.new_from_db(row)
+    end.first
+  end
+
 end
