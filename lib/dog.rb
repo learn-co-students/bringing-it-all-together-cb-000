@@ -24,4 +24,9 @@ class Dog
     DB[:conn].execute(sql)
   end
 
+  # drops the dogs table from the database
+  def self.drop_table
+    DB[:conn].execute("DROP TABLE dogs;")
+  end
+
 end
