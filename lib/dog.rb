@@ -8,9 +8,9 @@ class Dog
   end
 
   def self.create(name:, breed:)
-    new = Dog.new(name, breed)
-    song.save
-    song
+    new_dog = Dog.new(name: name, breed: breed)
+    new_dog.save
+    new_dog
   end
 
   def self.create_table
@@ -27,8 +27,13 @@ class Dog
         VALUES (?, ?)
       SQL
 
-      result = DB[:conn].execute(sql, self.name, self.breed)
-      new_from_db(result)
+      DB[:conn].execute(sql, self.name, self.breed)
+
+      @id = DB[:conn].execute("SELECT last_insert_rowid() FROM dogs")[0][0]
+
+      self
+
+
   end
 
   def self.new_from_db(row)
@@ -43,14 +48,22 @@ class Dog
 
     sql = "SELECT * FROM dogs WHERE name = ?"
 
-    DB[:conn].execute(sql, name)
-    # for whatever reason, return is blank - not finding "Teddy"
+    DB[:conn].execute(sql, name).map do |row|
+      self.new_from_db(row)
+      end.first
   end
 
+  def update
+    sql = "UPDATE dogs SET name = ?, breed = ? WHERE id = ?"
+    DB[:conn].execute(sql, self.name, self.breed, self.id)
+  end
+  
   def self.find_by_id(id)
-    sql = "SELECT * FROM songs WHERE id = ?"
-    result = DB[:conn].execute(sql, id)[0]
-    Dog.new(result[0], result[1], result[2])
+    sql = "SELECT * FROM dogs WHERE id = ?"
+
+    DB[:conn].execute(sql, id).map do |row|
+      self.new_from_db(row)
+      end.first
   end
 
 end
