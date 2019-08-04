@@ -1,0 +1,45 @@
+
+Dog
+  attributes
+[32m    has a name and a breed[0m
+[32m    has an id that defaults to `nil` on initialization[0m
+[32m    accepts key value pairs as arguments to initialize[0m
+  ::create_table
+[32m    creates the dogs table in the database[0m
+  ::drop_table
+[32m    drops the dogs table from the database[0m
+  #save
+[32m    returns an instance of the dog class[0m
+[32m    saves an instance of the dog class to the database and then sets the given dogs `id` attribute[0m
+  ::create
+[32m    takes in a hash of attributes and uses metaprogramming to create a new dog object. Then it uses the #save method to save that dog to the database[0m
+[32m    returns a new dog object[0m
+  ::find_by_id
+[32m    returns a new dog object by id[0m
+  ::find_or_create_by
+[31m    creates an instance of a dog if it does not already exist (FAILED - 1)[0m
+
+Failures:
+
+  1) Dog ::find_or_create_by creates an instance of a dog if it does not already exist
+     [31mFailure/Error:[0m
+     [31m  [0m[32mdef[0m [1;34minitialize[0m([35mname[0m:,[35mbreed[0m:,[35mid[0m:[1;36mnil[0m)[0m
+     [31m    [0m@name = name[0m
+     [31m    [0m@breed = breed[0m
+     [31m    [0m@id = id[0m
+     [31m  [0m[32mend[0m[0m
+     [31m[0m
+     [31mArgumentError:[0m
+     [31m  wrong number of arguments (given 3, expected 0)[0m
+     [36m# ./lib/dog.rb:4:in `initialize'[0m
+     [36m# ./lib/dog.rb:47:in `new'[0m
+     [36m# ./lib/dog.rb:47:in `find_or_create_by'[0m
+     [36m# ./spec/dog_spec.rb:97:in `block (3 levels) in <top (required)>'[0m
+
+Finished in 0.00976 seconds (files took 0.41637 seconds to load)
+[31m11 examples, 1 failure[0m
+
+Failed examples:
+
+[31mrspec ./spec/dog_spec.rb:95[0m [36m# Dog ::find_or_create_by creates an instance of a dog if it does not already exist[0m
+
