@@ -70,11 +70,11 @@ describe "Dog" do
 
   describe ".create" do
     it 'takes in a hash of attributes and uses metaprogramming to create a new dog object. Then it uses the #save method to save that dog to the database'do
-      Dog.create(name: "Ralph", breed: "lab")
+      Dog.create("Ralph","lab")
       expect(DB[:conn].execute("SELECT * FROM dogs")).to eq([[1, "Ralph", "lab"]])
     end
     it 'returns a new dog object' do
-      dog = Dog.create(name: "Dave", breed: "podle")
+      dog = Dog.create("Dave","podle")
 
       expect(teddy).to be_an_instance_of(Dog)
       expect(dog.name).to eq("Dave")
@@ -94,7 +94,7 @@ describe "Dog" do
   
   describe '.find_by_id' do
     it 'returns a new dog object by id' do
-      dog = Dog.create(name: "Kevin", breed: "shepard")
+      dog = Dog.create("Kevin","shepard")
 
       dog_from_db = Dog.find_by_id(1)
 
@@ -104,25 +104,25 @@ describe "Dog" do
 
   describe '.find_or_create_by' do
     it 'creates an instance of a dog if it does not already exist' do
-      dog1 = Dog.create(name: 'teddy', breed: 'cockapoo')
-      dog2 = Dog.find_or_create_by(name: 'teddy', breed: 'cockapoo')
+      dog1 = Dog.create('teddy','cockapoo')
+      dog2 = Dog.find_or_create_by('teddy','cockapoo')
 
       expect(dog1.id).to eq(dog2.id)
     end
     it 'when two dogs have the same name and different breed, it returns the correct dog' do
-      dog1 = Dog.create(name: 'teddy', breed: 'cockapoo')
-      dog2 = Dog.create(name: 'teddy', breed: 'pug')
+      dog1 = Dog.create('teddy','cockapoo')
+      dog2 = Dog.create('teddy','pug')
 
-      dog_from_db = Dog.find_or_create_by({name: 'teddy', breed: 'cockapoo'})
+      dog_from_db = Dog.find_or_create_by('teddy','cockapoo')
 
       expect(dog_from_db.id).to eq(1)
       expect(dog_from_db.id).to eq(dog1.id)
     end
     it 'when creating a new dog with the same name as persisted dogs, it returns the correct dog' do
-      dog1 = Dog.create(name: 'teddy', breed: 'cockapoo')
-      dog2 = Dog.create(name: 'teddy', breed: 'pug')
+      dog1 = Dog.create('teddy','cockapoo')
+      dog2 = Dog.create('teddy','pug')
 
-      new_dog = Dog.find_or_create_by({name: 'teddy', breed: 'irish setter'})
+      new_dog = Dog.find_or_create_by('teddy','irish setter')
 
       expect(new_dog.id).to eq(3)
     end
